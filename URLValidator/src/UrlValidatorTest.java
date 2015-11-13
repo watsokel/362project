@@ -42,6 +42,7 @@ public class UrlValidatorTest extends TestCase {
 	/*URL Components for Partition 2*/
 	private String[] schemes2 = new String[10];
 	private String[] hosts2 = new String[10];
+	private String[] tld2 = new String[10];
 	private String[] ports2 = new String[10];
 	private String[] paths2 = new String[10];
 	private String[] queries2 = new String[10];
@@ -89,8 +90,9 @@ public class UrlValidatorTest extends TestCase {
 		queries1[0] = queries2[0] = "?action=view";
 		queries1[1] = queries2[1] = "?action=edit&mode=up";
 		
-		fragments1[0]="#";
-		fragments1[1]="anchr";
+		//set up valid fragments
+		fragments1[0] = fragments2[0] = "#";
+		fragments1[1] = fragments2[1] = "#anchr";
 	}
 	
 	/**
@@ -148,14 +150,14 @@ public class UrlValidatorTest extends TestCase {
 									//Source: http://stackoverflow.com/questions/4115602/assert-statement-causing-junit-tests-to-stop	
 									try{
 										assertEquals(testURL, false, uv.isValid(testURL)); //should be an invalid url due to missing required components
-										System.out.println("  PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
+										//System.out.println("  PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
 									} catch(AssertionError e){
 										System.out.println("  FAIL:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
 									}
 								}else{
 									try{
 										assertEquals(testURL, true, uv.isValid(testURL)); //should be valid (no missing required components)
-										System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+										//System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
 									} catch(AssertionError e){										
 										System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
 									}
@@ -171,14 +173,17 @@ public class UrlValidatorTest extends TestCase {
 	
 	/** 
 	 * Test URL inputs with syntactical errors other than missing components 
+	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slash, encoded URLs should be valid: e.g. /%20
+	 *  
 	 */
 	public void testYourSecondPartition() {
 		System.out.println("TRACE: testYourSecondPartition()");	   
 		UrlValidator urlVal = new UrlValidator(schemes2); //only the schemes in schemes2 are valid schemes
 
 		//TODO: add invalid schemes
-		//schemes2[4]
-		//schemes2[5]
+		//schemes2[4] = "htp://";
+		//schemes2[5] = "http:"; //missing
+		//
 			// ... MORE ...
 		
 		//TODO: add invalid hosts
@@ -190,13 +195,13 @@ public class UrlValidatorTest extends TestCase {
 			// ... MORE ...
 		
 		//TODO: add invalid paths, queries, fragments etc
-		
-		
 
 	}
+
+	
 	
 	/** 
-	 * Tests valid inputs ??? 3rd partition? Random tests? Components in the wrong order???
+	 * Tests valid inputs ??? 3rd partition?  Components in the wrong order???
 	 */
 	public void testIsValid() {
 		System.out.println("TRACE: testIsValid()");	   
@@ -208,6 +213,12 @@ public class UrlValidatorTest extends TestCase {
 		
 	}
 
+	/*
+	 * Errors in top-level domains .ca .com .au  .co.uk 
+	 * Multiple queries
+	 * Encoded URLs should be valid: /%20
+	 * 
+	 * */
 	public void testAnyOtherUnitTest() {
 		System.out.println("TRACE: testAnyOtherUnitTest()");	   
 

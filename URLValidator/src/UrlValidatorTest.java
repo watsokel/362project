@@ -150,14 +150,14 @@ public class UrlValidatorTest extends TestCase {
 									//Source: http://stackoverflow.com/questions/4115602/assert-statement-causing-junit-tests-to-stop	
 									try{
 										assertEquals(testURL, false, uv.isValid(testURL)); //should be an invalid url due to missing required components
-										//System.out.println("  PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
+										System.out.println("  PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
 									} catch(AssertionError e){
 										System.out.println("  FAIL:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
 									}
 								}else{
 									try{
 										assertEquals(testURL, true, uv.isValid(testURL)); //should be valid (no missing required components)
-										//System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+										System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
 									} catch(AssertionError e){										
 										System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
 									}

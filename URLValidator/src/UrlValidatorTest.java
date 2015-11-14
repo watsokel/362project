@@ -109,26 +109,276 @@ public class UrlValidatorTest extends TestCase {
 	 */
 	public void testManualTest() {
 		System.out.println("TRACE: testManualTest()");	   
-		UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+		//UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+		UrlValidator uv = new UrlValidator();
+		String testURL = null;
 		
 		//Manual tests of valid URL's
-		System.out.println("http://www.amazon.com  expected=true, isValid()="+urlVal.isValid("http://www.amazon.com")); //returns true
-		System.out.println("http://www.google.com  expected=true, isValid()="+urlVal.isValid("http://www.google.com")); //returns true
-		System.out.println("http://www.go.com/test1  expected=true, isValid()="+urlVal.isValid("http://www.go.com/test1")); //returns true
-		System.out.println("http://google.com/test1  expected=true, isValid()="+urlVal.isValid("http://google.com/test1")); //returns true
-		System.out.println("http://www.go.com/test1?qry=ans  expected=true, isValid()="+urlVal.isValid("http://www.go.com/test1?qry=ans")); //returns false
-		System.out.println("http://www.go.com/test1?qr=ans#fra expected=true, isValid()="+urlVal.isValid("http://www.go.com/test1?qr=ans#fra")); //returns false
-	
+		try{
+			testURL = "ftp://www.amazon.com";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+					
+			testURL = "http://www.amazon.com";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+			testURL = "http://www.google.com";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+			testURL = "http://www.go.com/test1";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+			testURL = "http://google.com/test1";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+			testURL = "http://google.com/test1";
+			assertEquals(testURL, true, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+			testURL = "http://www.go.com/test1#fra";
+			assertEquals(testURL, true, uv.isValid(testURL));
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));
+			
+			/* Identifies Bug */
+			testURL = "http://www.go.com/test1?qr=ans#fra"; //FAILS, causes assertion error
+			assertEquals(testURL, true, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));	
+				
+					
+		} catch(AssertionError e){										
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		}
+		
+		/* Manual tests of invalid URL's */
+		try{
+			testURL = "https://///www.google.co";
+			assertEquals(testURL, false, uv.isValid(testURL)); //should be an invalid url due to missing required components
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
+			
+			testURL = "f://goog .c";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
+			
+			testURL = " ://google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
+			
+			testURL = " //google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = " google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "h:/google.c";
+			assertEquals(testURL, false, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));	
+			
+			testURL = "htp:///a/b/c./def.ghi.jkl/#";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+		} catch(AssertionError e){
+			System.out.println("   FAIL:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+		}
+		
 		//TODO: More manual tests!
 	
 	}
 
-	/**
-	 *  Test URL inputs with missing components 
+
+	/** 
+	 * Tests URLs with missing components
 	 */
 	public void testYourFirstPartition() {
 		System.out.println("TRACE: testYourFirstPartition()");	   
+		UrlValidator uv = new UrlValidator();
+		String testURL = null;
 
+		//missing scheme
+		try{
+			testURL = "www.amazon.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "www.amazon.com:80";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "google.com:65535";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			
+		}catch(AssertionError e){
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+		}
+		
+		//missing host
+		try{
+			testURL = "ftp://.ca";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://.ca";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://.ca:80";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "http://.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "http://.com/test1";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "https://.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://.co.uk";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://.co.uk/";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://.co.uk/test1";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			
+		}catch(AssertionError e){
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+		}
+		
+		//missing top-level domain
+		try{
+			testURL = "ftp://go";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://google";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "http://google/";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "http://google.";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+			testURL = "http://www.google";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://www.google.";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+			
+		}catch(AssertionError e){
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+		}
+		
+		//missing port
+		try{
+			testURL = "http://www.go.com/";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		} catch(AssertionError e){										
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		}
+	 
+		
+		//missing path
+		try{
+			testURL = "http://www.go.com";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		
+		} catch(AssertionError e){										
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		}
+		
+		//missing query
+		try{
+			testURL = "ftp://go.com";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		
+		} catch(AssertionError e){										
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		}
+		
+		
+		//missing fragment
+		try{
+			testURL = "https://go.com ";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		
+		} catch(AssertionError e){										
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+		}
+	}
+
+	
+	
+	/** 
+	 * Test URL inputs with syntactical errors other than missing components 
+	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slash, encoded URLs should be valid: e.g. /%20
+	 *  Components in the wrong order???
+	 */
+	public void testYourSecondPartition() {
+		System.out.println("TRACE: testYourSecondPartition()");	   
+
+
+	}
+
+	/**
+	 * Errors in top-level domains .ca .com .au  .co.uk 
+	 * Multiple queries
+	 * Encoded URLs should be valid: /%20
+	 * 
+	 */
+	public void testYourThirdPartition(){
+		
+	}
+	
+	public void testYourFourthPartition(){
+		
+	}
+	
+	/**
+	 *  Programmatic tests 
+	 */
+	public void testIsValid() {
+		System.out.println("TRACE: testIsValid()");	   
+
+		/* Test missing components programmatically */
+		
 		//add empty (missing) components
 		schemes1[schemes1.length-1] = hosts1[hosts1.length-1] = ports1[ports1.length-1] = 
 				paths1[paths1.length-1] = queries1[queries1.length-1] = fragments1[fragments1.length-1] = "";
@@ -156,7 +406,7 @@ public class UrlValidatorTest extends TestCase {
 									}
 								}else{
 									try{
-										assertEquals(testURL, true, uv.isValid(testURL)); //should be valid (no missing required components)
+										assertEquals(testURL, true, uv.isValid(testURL)); 
 										System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
 									} catch(AssertionError e){										
 										System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
@@ -168,17 +418,10 @@ public class UrlValidatorTest extends TestCase {
 					} 
 				}
 			}
-		}		
-	}
-	
-	/** 
-	 * Test URL inputs with syntactical errors other than missing components 
-	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slash, encoded URLs should be valid: e.g. /%20
-	 *  
-	 */
-	public void testYourSecondPartition() {
-		System.out.println("TRACE: testYourSecondPartition()");	   
-		UrlValidator urlVal = new UrlValidator(schemes2); //only the schemes in schemes2 are valid schemes
+		}
+		
+		/* Test syntactically invalid URLs programmatically */
+		UrlValidator urlVal2 = new UrlValidator(schemes2); //only the schemes in schemes2 are valid schemes
 
 		//TODO: add invalid schemes
 		//schemes2[4] = "htp://";
@@ -195,23 +438,8 @@ public class UrlValidatorTest extends TestCase {
 			// ... MORE ...
 		
 		//TODO: add invalid paths, queries, fragments etc
-
 	}
-
 	
-	
-	/** 
-	 * Tests valid inputs ??? 3rd partition?  Components in the wrong order???
-	 */
-	public void testIsValid() {
-		System.out.println("TRACE: testIsValid()");	   
-
-		//for (int i = 0; i < 10000; i++) {
-		//
-		//}
-		 
-		
-	}
 
 	/*
 	 * Errors in top-level domains .ca .com .au  .co.uk 

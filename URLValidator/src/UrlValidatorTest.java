@@ -30,6 +30,7 @@ public class UrlValidatorTest extends TestCase {
 										// scheme,host,port,path, query test
 										// were using.
 
+	private String testURL = null;
 	
 	/*URL Components for Partition 1*/
 	private String[] schemes1 = new String[5];
@@ -111,7 +112,6 @@ public class UrlValidatorTest extends TestCase {
 		System.out.println("TRACE: testManualTest()");	   
 		//UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 		UrlValidator uv = new UrlValidator();
-		String testURL = null;
 		
 		//Manual tests of valid URL's
 		try{
@@ -201,7 +201,6 @@ public class UrlValidatorTest extends TestCase {
 	public void testYourFirstPartition() {
 		System.out.println("TRACE: testYourFirstPartition()");	   
 		UrlValidator uv = new UrlValidator();
-		String testURL = null;
 
 		//missing scheme
 		try{
@@ -347,13 +346,50 @@ public class UrlValidatorTest extends TestCase {
 	
 	
 	/** 
-	 * Test URL inputs with syntactical errors other than missing components 
-	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slash, encoded URLs should be valid: e.g. /%20
-	 *  Components in the wrong order???
+	 * Grammatical/Syntactical errors: extra slashes
 	 */
 	public void testYourSecondPartition() {
-		System.out.println("TRACE: testYourSecondPartition()");	   
+		System.out.println("TRACE: testYourSecondPartition()");	
+		UrlValidator uv = new UrlValidator();
 
+		try{
+			testURL = "ftp:///www.google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http:///www.google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http:////www.google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://///www.google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://////www.google.com";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://www.google.com//";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://www.google.com/page//";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			testURL = "http://www.google.com/page1/page2//";
+			assertEquals(testURL, false, uv.isValid(testURL));  
+			System.out.println("   PASS:  "+testURL+"   expected=false, isValid()="+uv.isValid(testURL));
+
+			
+		}catch(AssertionError e){
+			System.out.println("   FAIL:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+
+		}
 
 	}
 
@@ -366,7 +402,12 @@ public class UrlValidatorTest extends TestCase {
 	public void testYourThirdPartition(){
 		
 	}
-	
+
+	/** 
+	 * Test URL inputs with syntactical errors other than missing components 
+	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slash, encoded URLs should be valid: e.g. /%20
+	 *  Components in the wrong order???
+	 */
 	public void testYourFourthPartition(){
 		
 	}

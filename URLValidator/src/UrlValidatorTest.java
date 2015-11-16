@@ -394,22 +394,99 @@ public class UrlValidatorTest extends TestCase {
 	}
 
 	/**
-	 * Errors in top-level domains .ca .com .au  .co.uk 
-	 * Multiple queries
-	 * Encoded URLs should be valid: /%20
-	 * 
+	 * Testing for allowed substrings in URLs
+	 * Checking for errors in top-level domains, common port numbers and encoded URLs
+	 * Top level domains ie: .ca .com .au .co.uk
+	 * Encoded URLs ie: /%20(valid)
 	 */
 	public void testYourThirdPartition(){
 		
+		// TODO: ADD MORE TOP LEVEL DOMAINS
+		
+		// testing top level domains: all of these urls should evaluate to true
+		System.out.println("TRACE: testYourThirdPartition()");	
+		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+		
+		String[] myUrls = new String[1];
+		myUrls[0] = "http://www.is.co.za/";
+		
+		for (int i = 0; i < myUrls.length; i++)
+		{
+			try{
+				assertEquals(myUrls[i], true, uv.isValid(myUrls[i])); 
+				System.out.println("   PASS:  "+myUrls[i]+"   expected=true, isValid()="+uv.isValid(myUrls[i]));		
+			} catch(AssertionError e){										
+				System.out.println("   FAIL:  "+myUrls[i]+"   expected=true, isValid()="+uv.isValid(myUrls[i]));		
+			}
+		}
+		
+		// testing common numbers: all of these urls should evaluate to true
+		String[] myPorts = new String[16];
+		myPorts[0] = "http://192.0.2.10/index.html";				// ip4v address
+		myPorts[1] = "http://142.42.1.1:8080/";						// ip4v address with port
+		myPorts[2] = "http://142.42.1.1:20/";
+		myPorts[3] = "http://142.42.1.1:21/";
+		myPorts[4] = "http://142.42.1.1:23/";
+		myPorts[5] = "http://142.42.1.1:25/";
+		myPorts[6] = "http://142.42.1.1:53/";
+		myPorts[7] = "http://142.42.1.1:80/";
+		myPorts[8] = "http://142.42.1.1:110/";
+		myPorts[9] = "http://142.42.1.1:119/";
+		myPorts[10] = "http://142.42.1.1:143/";
+		myPorts[11] = "http://142.42.1.1:161/";
+		myPorts[12] = "http://142.42.1.1:194/";
+		myPorts[13] = "https://142.42.1.1:443/";					// commonly used for https
+		myPorts[14] = "http://142.42.1.1:465/";
+		myPorts[15] = "http://142.42.1.1:8443/";
+		
+		for (int i = 0; i < myPorts.length; i++)
+		{
+			try{
+				assertEquals(myPorts[i], true, uv.isValid(myPorts[i])); 
+				System.out.println("   PASS:  "+myPorts[i]+"   expected=true, isValid()="+uv.isValid(myPorts[i]));		
+			} catch(AssertionError e){										
+				System.out.println("   FAIL:  "+myPorts[i]+"   expected=true, isValid()="+uv.isValid(myPorts[i]));		
+			}
+		}
+		
+		/*String[] myEncodedStr = new String[1];
+		myEncodedStr[0] = "";
+		
+		for (int i = 0; i < myEncodedStr.length; i++)
+		{
+			try{
+				assertEquals(myEncodedStr[i], true, uv.isValid(myEncodedStr[i])); 
+				System.out.println("   PASS:  "+myEncodedStr[i]+"   expected=true, isValid()="+uv.isValid(myEncodedStr[i]));		
+			} catch(AssertionError e){										
+				System.out.println("   FAIL:  "+myEncodedStr[i]+"   expected=true, isValid()="+uv.isValid(myEncodedStr[i]));		
+			}
+		}*/
 	}
 
 	/** 
 	 * Test URL inputs with syntactical errors other than missing components 
-	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slash, encoded URLs should be valid: e.g. /%20
+	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slashes, case sensitivity
 	 *  Components in the wrong order???
 	 */
 	public void testYourFourthPartition(){
+		System.out.println("TRACE: testYourFourthPartition()");	
+		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 		
+		/*schemes that should pass */
+		String[] myUrls = new String[3];
+		myUrls[0] = "http://www.google.com/";			// valid address
+		myUrls[1] = "HTTP://www.google.com/";			// testing case insensitivity on scheme
+		myUrls[2] = "http://www.GOOGLE.COM/";			// testing case insensitivity on host subcomponent		
+		
+		for (int i = 0; i < myUrls.length; i++)
+		{
+			try{
+				assertEquals(myUrls[i], true, uv.isValid(myUrls[i])); 
+				System.out.println("   PASS:  "+myUrls[i]+"   expected=true, isValid()="+uv.isValid(myUrls[i]));		
+			} catch(AssertionError e){										
+				System.out.println("   FAIL:  "+myUrls[i]+"   expected=true, isValid()="+uv.isValid(myUrls[i]));		
+			}
+		}
 	}
 	
 	/**

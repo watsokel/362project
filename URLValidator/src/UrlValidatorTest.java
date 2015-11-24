@@ -148,7 +148,11 @@ public class UrlValidatorTest extends TestCase {
 					
 			testURL = "http://www.amazon.com";
 			assertEquals(testURL, true, uv.isValid(testURL)); 
-			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));		
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));	
+			
+			testURL = "http://www.ebay.arpa";
+			assertEquals(testURL, true, uv.isValid(testURL)); 
+			System.out.println("   PASS:  "+testURL+"   expected=true, isValid()="+uv.isValid(testURL));
 
 			testURL = "http://www.google.com";
 			assertEquals(testURL, true, uv.isValid(testURL)); 
@@ -222,8 +226,8 @@ public class UrlValidatorTest extends TestCase {
 	/** 
 	 * Tests URLs with missing components
 	 */
-	public void testYourFirstPartition() {
-		System.out.println("TRACE: testYourFirstPartition()");	   
+	public void testMissingComponents() {
+		System.out.println("TRACE: testMissingComponents()");	   
 		UrlValidator uv = new UrlValidator();
 
 		//missing scheme
@@ -370,8 +374,8 @@ public class UrlValidatorTest extends TestCase {
 	/** 
 	 * Grammatical/Syntactical errors: extra slashes
 	 */
-	public void testYourSecondPartition() {
-		System.out.println("TRACE: testYourSecondPartition()");	
+	public void testExtraSlashes() {
+		System.out.println("TRACE: testExtraSlashes()");	
 		UrlValidator uv = new UrlValidator();
 
 		try{
@@ -421,17 +425,18 @@ public class UrlValidatorTest extends TestCase {
 	 * Top level domains ie: .ca .com .au .co.uk
 	 * Encoded URLs ie: /%20(valid)
 	 */
-	public void testYourThirdPartition(){
+	public void testTopLevelDomains(){
 
 		// TODO: ADD MORE TOP LEVEL DOMAINS
 		
 		// testing top level domains: all of these urls should evaluate to true
-		System.out.println("TRACE: testYourThirdPartition()");	
+		System.out.println("TRACE: testTopLevelDomains()");	
 		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 		
-		String[] myUrls = new String[1];
+		String[] myUrls = new String[2];
 		myUrls[0] = "http://www.is.co.za/";
-		
+		myUrls[1] = "http://www.myURL.arpa";
+
 		for (int i = 0; i < myUrls.length; i++)
 		{
 			try{
@@ -441,8 +446,14 @@ public class UrlValidatorTest extends TestCase {
 				System.out.println("   FAIL:  "+myUrls[i]+"   expected=true, isValid()="+uv.isValid(myUrls[i]));		
 			}
 		}
-		
-		// testing common numbers: all of these urls should evaluate to true
+	}
+
+	/** 
+	 * Testing common numbers: all of these urls should evaluate to true
+	 */
+	public void testPorts(){
+		System.out.println("TRACE: testPorts()");	
+		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 		String[] myPorts = new String[17];
 		myPorts[0] = "http://192.0.2.10/index.html";				// ip4v address
 		myPorts[1] = "http://142.42.1.1:8080/";						// ip4v address with port
@@ -471,10 +482,13 @@ public class UrlValidatorTest extends TestCase {
 				System.out.println("   FAIL:  "+myPorts[i]+"   expected=true, isValid()="+uv.isValid(myPorts[i]));		
 			}
 		}
-		
+	}
+	public void testEncodings(){
 		//URL encoding replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.
 		//URLs cannot contain spaces. URL encoding normally replaces a space with a plus (+) sign or with %20.
-		System.out.println("\nEncoded Strings");
+		System.out.println("\nTRACE: testEncodings()");
+		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+
 		String[] encodedStrPass = new String[5];
 		encodedStrPass[0] = "http://www.myURL.com/%20";
 		encodedStrPass[1] = "http://www.myURL.com/abc%20def.html";
@@ -510,21 +524,22 @@ public class UrlValidatorTest extends TestCase {
 			}
 		}
 	}
-
+	
 	/** 
 	 * Test URL inputs with syntactical errors other than missing components 
 	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slashes, case sensitivity
 	 *  Components in the wrong order???
 	 */
-	public void testYourFourthPartition(){
-		System.out.println("TRACE: testYourFourthPartition()");	
+	public void testLetterCase(){
+		System.out.println("TRACE: testLetterCase()");	
 		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 
 		/*schemes that should pass */
-		String[] myUrls = new String[3];
+		String[] myUrls = new String[4];
 		myUrls[0] = "http://www.google.com/";			// valid address
 		myUrls[1] = "HTTP://www.google.com/";			// testing case insensitivity on scheme
 		myUrls[2] = "http://www.GOOGLE.COM/";			// testing case insensitivity on host subcomponent		
+		myUrls[3] = "Http://www.gOoGlE.com/";
 		
 		for (int i = 0; i < myUrls.length; i++)
 		{
@@ -732,6 +747,9 @@ public class UrlValidatorTest extends TestCase {
 	    }
 		System.out.println("**************************");
 	}
+	
+	
+
 	/**
 	 * Create set of tests by taking the testUrlXXX arrays and running through
 	 * all possible permutations of their combinations.

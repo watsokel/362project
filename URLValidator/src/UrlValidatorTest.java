@@ -706,13 +706,18 @@ public class UrlValidatorTest extends TestCase {
 		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 
 		List<String> failedTests = new ArrayList<String>();
-		failedTests.add("http://ebay.arpa");
+		failedTests.add("http://ebay.arpa:0");
 		failedTests.add("http://ebay.arpa:80");
 		failedTests.add("http://ebay.com:500");
 		failedTests.add("http://ebay.com:999");
 		failedTests.add("http://ebay.com:1000");
-		failedTests.add("http://ebay.com:5000");
-		failedTests.add("http://ebay.com:10000");
+		failedTests.add("http://ebay.com:32000");
+		failedTests.add("http://ebay.com:16000");
+		failedTests.add("http://ebay.com:8000");
+		failedTests.add("http://ebay.com:4000");
+		failedTests.add("http://ebay.com:2000");
+		failedTests.add("http://ebay.com:1000");
+
 		failedTests.add("http://ebay.com:65535");
 		failedTests.add("http://ebay.arpa:80/test1#");
 		failedTests.add("http://ebay.arpa:80/test1#anchr");

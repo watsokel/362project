@@ -18,9 +18,6 @@
 import junit.framework.TestCase;
 import java.util.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.FixMethodOrder;
 /**
  * Performs Validation Test for url validations.
  *
@@ -28,12 +25,6 @@ import org.junit.FixMethodOrder;
  *          2011) $
  */
 public class UrlValidatorTest extends TestCase {
-
-	private boolean printStatus = false;
-	private boolean printIndex = false;// print index that indicates current
-										// scheme,host,port,path, query test
-										// were using.
-
 	private String testURL = null;
 	
 	/*URL Components for Partition 1*/
@@ -372,7 +363,7 @@ public class UrlValidatorTest extends TestCase {
 	
 	
 	/** 
-	 * Grammatical/Syntactical errors: extra slashes
+	 * Test URLs with extra slashes
 	 */
 	public void testExtraSlashes() {
 		System.out.println("TRACE: testExtraSlashes()");	
@@ -420,22 +411,18 @@ public class UrlValidatorTest extends TestCase {
 	}
 
 	/**
-	 * Testing for allowed substrings in URLs
-	 * Checking for errors in top-level domains, common port numbers and encoded URLs
-	 * Top level domains ie: .ca .com .au .co.uk
-	 * Encoded URLs ie: /%20(valid)
+	 * Test URLs with various top-level domains
 	 */
 	public void testTopLevelDomains(){
-
-		// TODO: ADD MORE TOP LEVEL DOMAINS
-		
-		// testing top level domains: all of these urls should evaluate to true
 		System.out.println("TRACE: testTopLevelDomains()");	
 		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 		
-		String[] myUrls = new String[2];
+		String[] myUrls = new String[5];
 		myUrls[0] = "http://www.is.co.za/";
-		myUrls[1] = "http://www.myURL.arpa";
+		myUrls[1] = "http://www.myURL.co.uk";
+		myUrls[2] = "http://www.myURL.nz";
+		myUrls[3] = "http://www.myURL.osaka";
+		myUrls[3] = "http://www.myURL.mobi";
 
 		for (int i = 0; i < myUrls.length; i++)
 		{
@@ -483,6 +470,31 @@ public class UrlValidatorTest extends TestCase {
 			}
 		}
 	}
+	
+	/** 
+	 * Testing common numbers: all of these urls should evaluate to true
+	 */
+	public void testQueries(){
+		System.out.println("TRACE: testQueries()");	
+		UrlValidator uv = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+		String[] queries = new String[4];
+		queries[0] = "http://www.google.com?";				// ip4v address
+		queries[1] = "http://www.google.com/mytest/program.exe?";						// ip4v address with port
+		queries[2] = "http://142.42.1.1:20/?question=answer";
+		queries[3] = "http://www.ebay.ca/index.html?test1=ans1&mode=2";
+		
+
+		for (int i = 0; i < queries.length; i++)
+		{
+			try{
+				assertEquals(queries[i], true, uv.isValid(queries[i])); 
+				System.out.println("   PASS:  "+queries[i]+"   expected=true, isValid()="+uv.isValid(queries[i]));		
+			} catch(AssertionError e){										
+				System.out.println("   FAIL:  "+queries[i]+"   expected=true, isValid()="+uv.isValid(queries[i]));		
+			}
+		}
+	}
+	
 	public void testEncodings(){
 		//URL encoding replaces unsafe ASCII characters with a "%" followed by two hexadecimal digits.
 		//URLs cannot contain spaces. URL encoding normally replaces a space with a plus (+) sign or with %20.
@@ -526,9 +538,7 @@ public class UrlValidatorTest extends TestCase {
 	}
 	
 	/** 
-	 * Test URL inputs with syntactical errors other than missing components 
-	 * Grammatical/Syntactical errors: whitespace, file://, extra slashes, missing slashes, case sensitivity
-	 *  Components in the wrong order???
+	 * Test URL inputs with different letter cases
 	 */
 	public void testLetterCase(){
 		System.out.println("TRACE: testLetterCase()");	
@@ -553,14 +563,14 @@ public class UrlValidatorTest extends TestCase {
 	}
 	
 	/**
-	 *  Programmatic tests 
+	 * Programmatically test all possible permutations of their combinations.
 	 */
 	public void testIsValid() {
 		System.out.println("TRACE: testIsValid()");	   
 
 		/* Test missing components programmatically */
-		
-		//add empty (missing) components
+
+		//add missing components
 		schemes1[schemes1.length-1] = hosts1[hosts1.length-1] = ports1[ports1.length-1] = 
 				paths1[paths1.length-1] = queries1[queries1.length-1] = fragments1[fragments1.length-1] = "";
 				
@@ -642,14 +652,7 @@ public class UrlValidatorTest extends TestCase {
 		paths2[7] = "/anch//";
 		paths2[8] = " /";
 		
-		//add invalid queries
-		/*queries2[4] = "?q = a";
-		queries2[5] = " ?q%20=a+";
-		queries2[6] = "?q1=a1+ ";
-		queries2[7] = "?q1 a1%20&q2=a2";
-		queries2[8] = "?q1=a1&q2=a2 ";
-		queries2[9] = "?q1=a1+a2 ";
-		queries2[10] = "?q1=a1&q2=a2 ";*/
+
 		
 		//add invalid fragments
 		fragments2[2] = " ";
@@ -697,9 +700,8 @@ public class UrlValidatorTest extends TestCase {
 	}
 	
 
-	/*
-	 * Further investigations on individual failed tests
-	 * 
+	/**
+	 * Further investigations on individual failed tests 
 	 * */
 	public void testAnyOtherUnitTest() {
 		System.out.println("TRACE: testAnyOtherUnitTest()");	   
@@ -743,7 +745,9 @@ public class UrlValidatorTest extends TestCase {
 
 	}
 	
-	
+	/**
+	 * Print failed tests
+	 */
 	public void testPrintFailedTests(List<String> failedTests){
 		//UrlValidatorTest vt = new UrlValidatorTest("url test");
 	    System.out.println("\n***FAILED TESTS SUMMARY***");
@@ -752,24 +756,5 @@ public class UrlValidatorTest extends TestCase {
 	    }
 		System.out.println("**************************");
 	}
-	
-	
-
-	/**
-	 * Create set of tests by taking the testUrlXXX arrays and running through
-	 * all possible permutations of their combinations.
-	 *
-	 * @param testObjects
-	 *            Used to create a url.
-	 * @throws Exception 
-	 */
-
-	/* 	Main method not required: http://sqa.fyicenter.com/FAQ/JUnit/Do_You_Need_to_Write_a_main_Method_in_a_JUnit_.html
-		Main method recommended: http://www.appperfect.com/support/java-coding-rules/junit.html*/
-	/*public static void main(String[] argv) throws Exception {
-		UrlValidatorTest vt = new UrlValidatorTest("url test");
-		vt.printFailedTests();
-
-	}*/
 	
 }
